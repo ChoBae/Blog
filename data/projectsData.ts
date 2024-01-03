@@ -8,7 +8,7 @@ const projectsData = [
   {
     title: 'SummaryWagon',
     description: `OPENAI 활용 사이트 요약 서비스`,
-    imgSrc: '/static/images/SummaryWagon.png',
+    imgSrc: '/static/images/summarywagon.png',
     href: '/blog/projects/summarywagon',
   },
   {

@@ -8,11 +8,15 @@ layout: PostSimple
 bibliography: references-data.bib
 ---
 
-
 <div className="flex items-center justify-center">
-  <Image className="w-1/2" src={'/static/images/dia.png'} width={300} height={300}></Image>
+  <Image
+    className="w-1/2"
+    src="/static/images/dia.png"
+    width={300}
+    height={300}
+    priority={true}
+  ></Image>
 </div>
-
 
 # 프로젝트 요약
 
@@ -32,5 +36,3 @@ bibliography: references-data.bib
 - **CSS 최적화**:
   - UI 컴포넌트 최적화: 테일윈드의 기존 단점인 코드 가독성 문제를 해결하기 위해, 재사용성을 고려하여 UI 컴포넌트를 구성했습니다.
   - 커스텀 최적화: Tailwind-merge를 활용하여 CSS 클래스 병합을 최적화함으로써, 코드의 가독성과 유지보수성을 향상시켰습니다.
-
-
