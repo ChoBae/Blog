@@ -45,7 +45,7 @@ export default function Intro() {
           배운 것을 공유하는 것을 좋아해서 블로그를 시작하게 되었습니다. <br />
         </h2>
         <br />
-        <span style={{ whiteSpace: 'pre' }} ref={el} />
+        <span className="whitespace-pre" ref={el} />
 
         <p className="pt-5 text-lg leading-7 text-slate-600 dark:text-slate-300 sm:block md:hidden lg:hidden">
           This is my place for in between. Have a good read!
