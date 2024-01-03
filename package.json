@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@next/bundle-analyzer": "14.0.3",
+    "@react-pdf/renderer": "^3.1.14",
+    "@simplepdf/react-embed-pdf": "^1.5.0",
     "@tailwindcss/forms": "^0.5.4",
     "@tailwindcss/typography": "^0.5.9",
     "autoprefixer": "^10.4.13",
@@ -27,6 +29,7 @@
     "postcss": "^8.4.24",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-pdf": "^7.6.0",
     "reading-time": "1.5.0",
     "rehype-autolink-headings": "^6.1.0",
     "rehype-citation": "^1.0.2",
@@ -38,12 +41,14 @@
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
     "tailwindcss": "^3.3.3",
+    "typed.js": "^2.1.0",
     "unist-util-visit": "^4.1.0"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.0.1",
     "@types/mdx": "^2.0.5",
     "@types/react": "^18.2.14",
+    "@types/react-pdf": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^6.1.0",
     "cross-env": "^7.0.3",

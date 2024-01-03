@@ -3,12 +3,16 @@ title: 'DIA(Developer Interview Assistant)'
 date: '2023-11-22'
 tags: ['Project']
 draft: false
-summary: DIA는 개발자 면접 도우미 입니다. 
-취업,이직을 위한 코딩테스트 앱은 많지만 면접 준비를 위한 앱은 없다는 것에서 시작했습니다.
- 개발자들이 좀더 실전적인 면접 연습을 할수 있게 돕는것이 목표입니다..
+summary: 'DIA는 개발자 면접 도우미 입니다. 취업,이직을 위한 코딩테스트 앱은 많지만 면접 준비를 위한 앱은 없다는 것에서 시작했습니다.개발자들이 좀더 실전적인 면접 연습을 할수 있게 돕는것이 목표입니다.'
+layout: PostSimple
+bibliography: references-data.bib
 ---
 
-![DIA](/static/images/DIA.png)
+
+<div className="flex items-center justify-center">
+  <Image className="w-1/2" src={'/static/images/DIA.png'} width={500} height={500}></Image>
+</div>
+
 
 # 프로젝트 요약
 
@@ -18,6 +22,8 @@ summary: DIA는 개발자 면접 도우미 입니다.
 - **TTS(Text To Speech) 기능을 활용**하여 사용자에게 입체감 있는 모의 면접 경험을 제공합니다
 - 모의 면접 이후 **STT(Speech To Text)를 통해 사용자가 작성한 스크립트와 비교**하여 향상된 학습 기회를 제공합니다.
 
+---
+
 # 프로젝트 기여
 
 - **웹 UI 구현**: 사용자 친화적이고 직관적인 인터페이스를 개발하여 면접 연습을 원활하게 할 수 있도록 디자인하고 구현하였습니다.
@@ -26,3 +32,5 @@ summary: DIA는 개발자 면접 도우미 입니다.
 - **CSS 최적화**:
   - UI 컴포넌트 최적화: 테일윈드의 기존 단점인 코드 가독성 문제를 해결하기 위해, 재사용성을 고려하여 UI 컴포넌트를 구성했습니다.
   - 커스텀 최적화: Tailwind-merge를 활용하여 CSS 클래스 병합을 최적화함으로써, 코드의 가독성과 유지보수성을 향상시켰습니다.
+
+

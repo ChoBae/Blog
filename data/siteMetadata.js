@@ -6,8 +6,8 @@ const siteMetadata = {
   description: '부족하지만 한번 끄적여보겠습니다 😎',
   language: 'ko-KR',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
-  siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
+  siteUrl: 'https://chobae.vercel.app',
+  siteRepo: 'https://github.com/chobae/blog',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/twitter-card.png',
   mastodon: 'https://mastodon.social/@mastodonuser',

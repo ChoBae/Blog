@@ -71,6 +71,10 @@ module.exports = () => {
           protocol: 'https',
           hostname: 'picsum.photos',
         },
+        {
+          protocol: 'https',
+          hostname: 'user-images.githubusercontent.com',
+        },
       ],
     },
     async headers() {
@@ -88,6 +92,14 @@ module.exports = () => {
       })
 
       return config
+    },
+    async rewrites() {
+      return [
+        {
+          source: '/resume.pdf',
+          destination: '/static/resume.pdf', // 실제 파일 경로로 변경
+        },
+      ]
     },
   })
 }
