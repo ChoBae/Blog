@@ -52,18 +52,18 @@ export default function Intro() {
         </p>
         <p className="hidden pt-10 text-lg leading-7 text-slate-600 dark:text-slate-300 md:block">
           부족하지만 개발에 대해 끄적여보겠습니다 😎{' '}
-          <div className="mt-8 text-slate-600 dark:text-slate-400">
-            <span className="text-sm">Press</span>{' '}
-            <span className="rounded-md bg-gray-300 p-1 text-sm text-gray-900 dark:bg-gray-400">
-              ⌘
-            </span>{' '}
-            <span className="text-sm">+ </span>
-            <span className="rounded-md bg-gray-300 p-1 text-sm text-gray-900 dark:bg-gray-400">
-              K
-            </span>{' '}
-            <span className="text-sm">로 검색하세요!</span>
-          </div>
         </p>
+        <div className="mt-8 text-slate-600 dark:text-slate-400">
+          <span className="text-sm">Press</span>{' '}
+          <span className="rounded-md bg-gray-300 p-1 text-sm text-gray-900 dark:bg-gray-400">
+            ⌘
+          </span>{' '}
+          <span className="text-sm">+ </span>
+          <span className="rounded-md bg-gray-300 p-1 text-sm text-gray-900 dark:bg-gray-400">
+            K
+          </span>{' '}
+          <span className="text-sm">로 검색하세요!</span>
+        </div>
       </div>
       <div className="flex items-center justify-center">
         <div className="grid grid-cols-1 grid-rows-3 gap-8 py-12">
@@ -128,7 +128,7 @@ export default function Intro() {
           <div className="my-2 grid items-start gap-8">
             <div className="group relative">
               <div className="animate-tilt absolute -inset-0.5 rounded-lg bg-gradient-to-r  from-pink-600 to-purple-600 opacity-50 blur transition duration-1000 group-hover:opacity-100 group-hover:duration-200"></div>
-              <Link href="/resume">
+              <Link href="/resume.pdf" target="_blank" rel="noopener noreferrer">
                 <span className="relative flex items-center divide-x divide-gray-600 rounded-lg bg-white px-7 py-4 leading-none dark:bg-black">
                   <span className="flex items-center space-x-5">
                     <svg

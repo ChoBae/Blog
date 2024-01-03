@@ -86,13 +86,23 @@ module.exports = () => {
       ]
     },
     webpack: (config, options) => {
-      config.module.rules.push({
-        test: /\.svg$/,
-        use: ['@svgr/webpack'],
-      })
+      config.module.rules.push(
+        {
+          test: /\.svg$/,
+          use: ['@svgr/webpack'],
+        },
+        {
+          test: /\.pdf/,
+          type: 'asset/resource',
+          generator: {
+            filename: 'static/[hash][ext]',
+          },
+        }
+      )
 
       return config
     },
+
     async rewrites() {
       return [
         {
@@ -101,5 +111,6 @@ module.exports = () => {
         },
       ]
     },
+    // output: { path: require('path').resolve(__dirname, 'static') },
   })
 }
