@@ -1,0 +1,251 @@
+---
+title: 'Nextjs의 슬기로운 Data Fetching'
+date: '2024-02-12'
+tags: ['Nextjs', 'Data Fetching']
+draft: false
+summary: 'Nextjs를 베이스로 한 프로젝트를 진행하다보면 한번쯤은 고민하게 되는 Data Fetching에 대해 다뤄보려고 합니다.'
+---
+
+<div className="flex items-center justify-center">
+  <Image
+    className="w-full"
+    src="/static/images/thumbnail/nextjs.png"
+    width={700}
+    height={300}
+    priority={true}
+  ></Image>
+</div>
+<div className="bg-[#FF6969] p-2 rounded-lg flex flex-col items-center sm:flex-row">
+  <span className="text-3xl m-2">💡</span>
+  <p className="font-bold text-sm text-center sm:text-left">이 글에서 사용되는 예제 코드들은 `Nextjs v13` 기준으로 작성되었음에 주의바랍니다.</p>
+</div>
+
+## 소개
+
+Nextjs를 베이스로 한 프로젝트를 진행하다보면 한번쯤은 고민하게 되는 <span className="text-primary-500 font-bold">
+Data Fetching</span>에 대해 다뤄보려고 합니다. 
+
+
+<TOCInline toc={props.toc} exclude="소개" />
+
+## Nextjs에서 데이터를 가져올 수 있는 방법
+
+---
+
+Nextjs에서 제안하는 <span className="text-primary-500 font-bold">
+데이터 패칭시 사용할 수 있는 방법은 4가지
+</span>가 있습니다.
+1. **Server(Page, Component)** 에서 `fetch()` 사용
+2. **Server(Page, Component)** 에서 `서드파티 라이브러리` 사용
+3. **Client(Page, Component)** 에서 `라우터 핸들러` 를 사용
+4. **Client(Page, Component)** 에서 `서드파티 라이브러리` 사용
+
+
+
+Next.js는 개발자에게 다양한 선택지를 제공하여 고민을 유발했습니다.   
+지금부터 Nextjs 공식 문서에서 제안하는 데이터 패칭 방법을 하나 하나 살펴보고 상황에 맞게 현명한 선택을 해봅시다.🚀
+
+## 1. Server 에서 fetch() 사용
+
+---
+
+첫번째로 소개하는 방법은 **제가 가장 많이 사용하는 데이터 패칭 방식**이자,  
+Nextjs에서 제안하는 [Best Practices](https://nextjs.org/docs/app/building-your-application/data-fetching/patterns) 중의 하나입니다.  
+아래는 정말 기본적인 예시입니다.
+
+### 예시 코드
+
+```tsx
+async function getData() {
+  const res = await fetch('https://api.example.com/...')
+  // 반환값은 직렬화되지 않고, Data, Map, Set 등으로 리턴 할 수 있다.
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch data')
+  }
+
+  return res.json()
+}
+
+export default async function Page() {
+  const data = await getData()
+
+  return <main {...data}></main>
+}
+```
+<div className="bg-[#C7E9B0] p-2 rounded-lg flex flex-col items-center sm:flex-row">
+  <span className="text-3xl m-2">💡</span>
+  <p className="font-bold text-sm text-center sm:text-left">타입 에러가 발생한다면 TypeScript 5.1.3 이상 및 @types/react 18.2.8 이상을 사용해야 합니다.</p>
+</div>
+
+Nextjs를 처음 사용한다면 기존의 리액트의 데이터 패칭과 크게 다르지 않다고 느낄 수 있습니다.  
+하지만 이 과정은 Client가 아닌 **Server** 에서 이루어진다는 점이고, 이 경우 **몇 가지 큰 장점**이 있습니다.  
+### 장점
+
+1. **백엔드 데이터 리소스(ex: db)에 직접 접근** 이 가능함
+2. 액세스 토큰, API 키 등 **민감한 정보가 Client에 노출되는 것을 방지** 할 수 있음
+3. Server에서 데이터를 가져오고 렌더링하므로 Client와 Server간의 **통신같은 복잡한 작업은 생략** 되고, 그에 따라 **Client의 기본 스레드 작업도 줄어듦**
+4. Client에서 여러 개별 요청을 수행하는 대신 **단일 왕복으로 여러 데이터를 가져올 수 있음**
+5. Client-Server **워터폴 감소**
+6. 지역에 따라 데이터 패칭시 데이터 소스에 더 가까운 곳에서 발생하여 대기 시간이 줄어들고, 성능이 향상될 수 있음
+
+또한 서버 액션을 통해 기존의 백엔드에서 수행했던 로직도 수행이 가능해집니다.
+
+### 데이터 캐싱 및 재검증
+![nextjs-cache](https://nextjs.org/_next/image?url=%2Fdocs%2Fdark%2Ffull-route-cache.png&w=3840&q=75&dpl=dpl_Cy5TnVSfFaNtSYETjzhzL3knHuFd)
+출처 : [Nextjs 공식 문서 - Caching in Next.js](https://nextjs.org/docs/app/building-your-application/caching#1-react-rendering-on-the-server)   
+
+Nextjs에서는 **기본적으로 fetch의 반환 값을 Server의 Data Cache에 자동으로 캐시**합니다.  
+대표적인 라이브러리인 `React Query`를 한번쯤 사용해보셨다면 이해가 빠르실 수 있습니다.  
+
+데이터를 캐싱하는 방법은 크게 두가지로 나뉩니다.  
+기본적으로  **fetch API의 옵션인 cache**를 사용하거나, Nextjs는 추가적으로 **확장된 기능**을 사용하면 됩니다. 
+
+#### cache Option
+```tsx
+fetch('https://...', { cache: 'force-cache' | 'no-store' })
+```
+1. **'force-cache'**
+- 디폴트 값으로 적용됨.
+- 일치하는 요청을 찾고, 최신인 경우 캐시에서 반환함 
+
+2. **'no-store'**
+- 캐시를 조회하지 않고, 요청이 있을때마다 리소스를 가져옴
+
+
+#### next.revalidate Option
+```tsx
+fetch(`https://...`, { next: { revalidate: false | 0 | number } })
+```
+
+1. **false**
+- 리소스를 **무기한 캐시**함(사실상 Infinity와 동일)
+- HTTP 캐시는 시간이 지남에 따라서 오래된 리소스를 제거할 수도 있음.
+2. **0**
+- 리소스가 캐시되지 않도록함.
+- 사실상 ‘cache: no-store’를 의미함.
+3. **number**
+- (초) 만큼 리소스의 캐시 수명을 지정함.
+- 만약 동일한 경로에서 같은 주소의 여러 개의 fetch 요청이 있을 경우 **더 낮은 number 값이 적용**됨.
+
+해당 옵션을 사용할때는 기존의 **fetch API의 cache 옵션과 충돌하지 않게 주의**해야합니다🚨  
+
+추가로 알아야 할 점은 데이터를 캐싱하는 것 외에도 **요청 자체를 줄일 수 있는 장점**이 있습니다. 아래의 그림을 통해 이해하기 쉬울 것입니다.
+![nextjs-cache](https://nextjs.org/_next/image?url=%2Fdocs%2Fdark%2Fdeduplicated-fetch-requests.png&w=3840&q=75&dpl=dpl_Cy5TnVSfFaNtSYETjzhzL3knHuFd)
+출처 : [Nextjs 공식 문서 - Caching in Next.js](https://nextjs.org/docs/app/building-your-application/caching#request-memoization)   
+
+사진처럼 컴포넌트 트리의 여러 위치에서 동일한 데이터에 대한 fetch 함수를 **한번만 실행해서 호출**할 수 있습니다.  
+이렇게 빌드나 요청 시 데이터를 가져오고, 캐시하고, 각 데이터 요청에서 **재사용을 통해 성능을 최적화** 할 수 있습니다.  
+하지만 **데이터 캐싱은 트레이드 오프 과정** 이기에 신중해서 코드를 작성할 필요가 있습니다.
+## 2. Server 에서 서드파티 라이브러리 사용
+---
+Nextjs Docs를 읽다 보면 명확하게 fetch API 사용을 권하는 것이 느껴집니다.    
+하지만 부득이하게 fetch API를 사용하지 못한다면 아래처럼 대응할 수 있습니다.  
+
+### 예시 코드
+
+```tsx
+// app/utils.ts
+import { cache } from 'react'
+ 
+export const getItem = cache(async (id: string) => {
+  const item = await db.item.findUnique({ id })
+  return item
+})
+
+```
+참고로 [리액트 공식 문서 - cache](https://react.dev/reference/react/cache)는 **서버 컴포넌트에서만 실행되는 실험적인 기능**입니다.  
+
+
+```tsx
+// app/item/[id]/layout.tsx
+import { getItem } from '@/utils/get-item'
+ 
+export const revalidate = 3600 // 상단에서 재검증 옵션을 활성화한다
+ 
+export default async function Layout({
+  params: { id },
+}: {
+  params: { id: string }
+}) {
+  const item = await getItem(id)
+  // ...
+}
+
+```
+
+```tsx
+// app/item/[id]/page.tsx
+import { getItem } from '@/utils/get-item'
+ 
+export const revalidate = 3600 // 상단에서 재검증 옵션을 활성화한다
+ 
+export default async function Page({
+  params: { id },
+}: {
+  params: { id: string }
+}) {
+  const item = await getItem(id)
+  // ...
+}
+```
+
+cache를 통해 **데이터 요청을 메모이제이션**하고, 레이아웃이나 페이지의 상단에서 **revalidate 옵션은 활성화해서 데이터를 재검증** 합니다.  
+두가지의 기능의 조화로 이전의 Server에서 fetch API를 통한 데이터 패칭과 유사하게 활용할 수 있습니다.
+## 3. Client 에서 Route Handler 사용
+
+---
+![nextjs-cache](https://nextjs.org/_next/image?url=%2Fdocs%2Fdark%2Froute-special-file.png&w=3840&q=75&dpl=dpl_Cy5TnVSfFaNtSYETjzhzL3knHuFd)
+출처 : [Nextjs Docs - Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers#dynamic-route-segments)   
+
+클라이언트 컴포넌트의 데이터 패칭은 보안상 취약할 수 있으므로, Nextjs에서는 **Route Handler**를 통해 **요청을 서버에서 실행**하고, **데이터를 클라이언트에 반환**할 수 있습니다.  
+<div className="bg-[#C7E9B0] p-2 rounded-lg flex flex-col items-center sm:flex-row">
+  <span className="text-3xl m-2">💡</span>
+  <p className="font-bold text-sm text-center sm:text-left">이 기능은 기본적으로 Nextjs v13의 App Router에서 동작합니다.</p>
+</div>
+
+```tsx
+// app/api/route.ts
+export const dynamic = 'force-dynamic' // defaults to auto
+  // HTTP 메소드인  GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS 등을 지원합니다.
+export async function GET() {
+  const res = await fetch('https://data.mongodb-api.com/...', {
+    headers: {
+      'Content-Type': 'application/json',
+      'API-Key': process.env.DATA_API_KEY,
+    },
+  })
+  const data = await res.json()
+ 
+  return Response.json({ data })
+}
+```
+
+위의 코드는 **모두 Server에서 동작**하며,이러한 방식으로 데이터 패칭하면 클라이언트에서 보안 정보인 'API_Key'나 데이터를 요청하는 주소를 노출하지 않게 되어 보안에 도움이 됩니다. 
+클라이언트는 오직 데이터만을 받아와서 활용할 수 있습니다.
+
+## 4. Client 에서 서드파티 라이브러리 사용
+
+---
+![SWR vs React-Query](https://media.dev.to/cdn-cgi/image/width=1600,height=900,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F1xrib5ygyudz53lshihg.png)
+출처 : [dev.to - SWR vs React-Query](https://dev.to/lvieira268/swr-vs-react-query-5el0)   
+
+기존에 많이 사랑받고 있는 **React(TanStack) Query나 SWR** 등을 사용해서 Client에서 데이터 패칭하는 방법입니다.
+개인적으로 리액트 프로젝트에서는 리액트 쿼리를 통해 여러 방면으로 효과를 얻었던 경험이 있어 해당 라이브러리들에 대해서는 호의적인 편입니다.    
+하지만 Nextjs을 기반으로 한 프로젝트를 진행할때 서드파티 라이브러리의 필요성을 크게 느끼진 못했습니다.~~(많은 경험은 없지만..)~~   
+해당 라이브러리들은 기본적으로 데이터 캐싱에 관련한 강력한 기능을 지원하고, 만약 사용한다면 개인적으로는 Vercel에서 개발한 SWR을 통해서 진행해볼 것 같습니다.  
+
+## 세줄 요약
+---
+- **Server에서 데이터 패칭**하는 것이 **보안적으로 안전하고, 성능 면에서 명확하게 유리**합니다. 
+- **데이터 캐싱은 트레이드 오프** 과정이므로, 신중하게 작성할 필요가 있습니다.
+- Client에서도 Route Handler를 통해 Server 데이터 패칭과 유사하게 활용할 수 있습니다.
+
+## Reference
+
+---
+
+- Nextjs 공식 문서- [Data Fetching, Caching, and Revalidating](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#fetching-data-on-the-server-with-third-party-libraries)
+- Nextjs 공식 문서- [fetch](https://nextjs.org/docs/app/api-reference/functions/fetch)
+- Nextjs 공식 문서- [Route Handler](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)
+- React 공식 문서- [cache](https://react.dev/reference/react/cache)
